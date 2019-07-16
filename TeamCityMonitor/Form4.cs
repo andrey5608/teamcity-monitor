@@ -28,7 +28,6 @@ namespace TeamCityMonitor
 
         string thisExePath = System.IO.Directory.GetCurrentDirectory() + "\\" + "workPanel.exe";
         string url = ConfigurationManager.AppSettings["teamCityUrl"];
-        //string[] teamCityProjectId = { "bt173", "WebQms_37Kazan", "bt199", "bt202", "bt114", "TransportGate_480" };
         string apiURL = "httpAuth/action.html?add2Queue=";
         string configKey;
         string configParameter;
@@ -39,7 +38,6 @@ namespace TeamCityMonitor
 
         public Form4()
         {
-
             InitializeComponent();
 
             for (int i = 0; i <= 9; i++)
@@ -73,13 +71,7 @@ namespace TeamCityMonitor
 
             automaticCheck();
         }
-        /*
-        private void Close_Click(object sender, FormClosedEventArgs e)
-        {
-            this.Close();
-        }*/
-
-
+        
         System.Timers.Timer autoCheckingPendingsTimer;
 
         public void CreateTimer(int minutes)
@@ -100,7 +92,6 @@ namespace TeamCityMonitor
             try
             {
                 checkPendings();
-
             }
             finally
             {
@@ -113,14 +104,6 @@ namespace TeamCityMonitor
             automaticCheckingPeriod = Convert.ToInt32(ConfigurationManager.AppSettings["automaticCheckingPeriod"]);
             if (automaticChecking == true)
             {
-                /*var startTimeSpan = TimeSpan.Zero;
-                var periodTimeSpan = TimeSpan.FromMinutes(automaticCheckingPeriod);
-
-                var timer = new System.Threading.Timer((e) =>
-                {
-                    checkPendings();
-                }, null, startTimeSpan, periodTimeSpan);*/
-
                 CreateTimer(automaticCheckingPeriod);
             }
         }
@@ -134,20 +117,16 @@ namespace TeamCityMonitor
             string decodedPassword = Form2.Base64Decode(ConfigurationManager.AppSettings["password"]);//декодируем пароль
             client.Authenticator = new HttpBasicAuthenticator(ConfigurationManager.AppSettings["user"], decodedPassword);//авторизуемся под логином и паролем из полей 3 и 4
 
-
             var request = new RestRequest(apiPart, Method.GET);// создаём REST-запрос GET методом
-
 
             IRestResponse response = client.Execute(request);
             string excMessage = "";
             string resp = Convert.ToString(response.Content);
-            if (Convert.ToString(response.Content) == "" || Convert.ToString(response.ErrorException) != "")
+            if ((Convert.ToString(response.Content) == "" || Convert.ToString(response.ErrorException) != "") 
+                && Convert.ToString(response.ErrorException) != "")
             {
-                if (Convert.ToString(response.ErrorException) != "")
-                {
-                    excMessage = ". Произошла ошибка. Текст исключения: " + Convert.ToString(response.ErrorException);
-                    MessageBox.Show(String.Format("Successful:{0} {1}", Convert.ToString(response.IsSuccessful), excMessage));
-                }
+                excMessage = ". Произошла ошибка. Текст исключения: " + Convert.ToString(response.ErrorException);
+                MessageBox.Show(String.Format("Successful:{0} {1}", Convert.ToString(response.IsSuccessful), excMessage));
             }
 
             try
@@ -171,20 +150,12 @@ namespace TeamCityMonitor
 
             catch (Newtonsoft.Json.JsonReaderException ex)
             {
-                /*label8.Text = "н/д (ошибка)";//если вместо json пришёл мусор/исключение/ошибка
-                label8.ForeColor = Color.Red;*/
+                //если вместо json пришёл мусор/исключение/ошибка
                 MessageBox.Show("Newtonsoft.Json.JsonReaderException. Вместо json пришёл мусор/исключение/ошибка. " + ex.Message, "Ошибка");
             }
             catch(InvalidOperationException)
             {
-
             }
-
-
-
-
-
-
         }
 
         private void checkedListBox1_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -231,7 +202,6 @@ namespace TeamCityMonitor
                 label7.ForeColor = Color.Green;
                 label7.Text = "Успешно";
             }
-
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -245,5 +215,4 @@ namespace TeamCityMonitor
             form2.ShowDialog();
         }
     }
-
 }
